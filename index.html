@@ -1,0 +1,53 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Universal Cloud Status</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background-color: #f5f8fa;
+  }
+  h1 {
+    color: #007bff;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+  }
+  .online {
+    color: green;
+  }
+  .offline {
+    color: red;
+  }
+</style>
+</head>
+<body>
+  <h1>Universal Cloud</h1>
+  <ul id="status-list"></ul>
+
+  <script>
+    async function fetchStatus() {
+      try {
+        const res = await fetch('/api/status');
+        const data = await res.json();
+
+        const list = document.getElementById('status-list');
+        list.innerHTML = '';
+        data.forEach(service => {
+          const li = document.createElement('li');
+          li.innerHTML = `<strong>${service.name}</strong>: <span class="${service.status.toLowerCase()}">${service.status}</span> (Last checked: ${new Date(service.lastChecked).toLocaleTimeString()})`;
+          list.appendChild(li);
+        });
+      } catch (e) {
+        console.error('Error fetching status', e);
+      }
+    }
+
+    fetchStatus();
+    setInterval(fetchStatus, 5000); // Update every 5 seconds
+  </script>
+</body>
+</html>
